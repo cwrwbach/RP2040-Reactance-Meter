@@ -4,8 +4,8 @@ Possibly to be used as a Capacitor and Inductor measurement tool.
 
 f = 1 / (2π √L C)   Resonant Frequency [Hz]
 
-L = 1 / (4π2 f2 C)   Inductance [H]
+L = 1 / (4π2 f C)   Inductance [H]
 
-C = 1 / (4π2 f2 L)   Capacitance [F]
+C = 1 / (4π2 f L)   Capacitance [F]
 
 
