@@ -1,35 +1,30 @@
+/**
+ * Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ */
+
 #include <stdio.h>
-#include <math.h>
-
-#include "pico/stdlib.h"
-#include "hardware/pwm.h"
-#include "hardware/clocks.h"
-
-
-//#include <stdio.h>
 #include <string.h>
-//#include "pico/stdlib.h"
-//#include "hardware/i2c.h"
-//#include "pico/binary_info.h"
+#include "pico/stdlib.h"
+#include "hardware/i2c.h"
+#include "pico/binary_info.h"
 
+/* Example code to drive a 16x2 LCD panel via a I2C bridge chip (e.g. PCF8574)
 
+   NOTE: The panel must be capable of being driven at 3.3v NOT 5v. The Pico
+   GPIO (and therefor I2C) cannot be used at 5v.
 
+   You will need to use a level shifter on the I2C lines if you want to run the
+   board at 5v.
 
-const uint MEASURE_PIN = 15; //This is GPIO 15 = PIN 20 = Slice 7B
-uint slice_num;
-pwm_config cfg;
+   Connections on Raspberry Pi Pico board, other boards may vary.
 
-//----
-
-
-/*
    GPIO 4 (pin 6)-> SDA on LCD bridge board
    GPIO 5 (pin 7)-> SCL on LCD bridge board
    3.3v (pin 36) -> VCC on LCD bridge board
    GND (pin 38)  -> GND on LCD bridge board
 */
-
-/*
 // commands
 const int LCD_CLEARDISPLAY = 0x01;
 const int LCD_RETURNHOME = 0x02;
@@ -73,9 +68,7 @@ static int addr = 0x27;
 #define MAX_LINES      2
 #define MAX_CHARS      16
 
-
-
-/* Quick helper function for single byte transfers 
+/* Quick helper function for single byte transfers */
 void i2c_write_byte(uint8_t val) {
 #ifdef i2c_default
     i2c_write_blocking(i2c_default, addr, &val, 1, false);
@@ -136,35 +129,10 @@ void lcd_init() {
     lcd_clear();
 }
 
-*/
-
-
-
-//---
-
-int measure_duty_cycle() 
-{
-
-pwm_init(slice_num, &cfg, false);
-sleep_ms(10); 
-pwm_set_enabled(slice_num, true);
-sleep_ms(1000);
-pwm_set_enabled(slice_num, false);
-
-unsigned int val = pwm_get_counter(slice_num);
-printf(" Count = %d \n",val);
-return val;
-}
-
-
-//-----
-
-
-/*
 int lcd_main() {
-//#if !defined(i2c_default) || !defined(PICO_DEFAULT_I2C_SDA_PIN) || !defined(PICO_DEFAULT_I2C_SCL_PIN)
-//    #warning i2c/lcd_1602_i2c example requires a board with I2C pins
-//#else
+#if !defined(i2c_default) || !defined(PICO_DEFAULT_I2C_SDA_PIN) || !defined(PICO_DEFAULT_I2C_SCL_PIN)
+    #warning i2c/lcd_1602_i2c example requires a board with I2C pins
+#else
     // This example will use I2C0 on the default SDA and SCL pins (4, 5 on a Pico)
     i2c_init(i2c_default, 100 * 1000);
     gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
@@ -178,14 +146,14 @@ int lcd_main() {
 
     static char *message[] =
             {
-                    "RP2040 by", "RP2040xxx"
-                  //  "A brand new", "microcontroller",
-                //    "Twin core M0", "Full C SDK",
-                 //   "flower power", "your product"
+                    "RP2040 by", "RP2040 land",
+                    "A brand new", "microcontroller",
+                    "Twin core M0", "Full C SDK",
+                    "flower power", "your product"
                    
             };
 
-    while (1) {
+   // while (0) {
         for (int m = 0; m < sizeof(message) / sizeof(message[0]); m += MAX_LINES) {
             for (int line = 0; line < MAX_LINES; line++) {
                 lcd_set_cursor(line, (MAX_CHARS / 2) - strlen(message[m + line]) / 2);
@@ -194,51 +162,8 @@ int lcd_main() {
             sleep_ms(2000);
             lcd_clear();
         }
-    }
+  //  }
 
     return 0;
-//#endif
-}
-
-
-*/
-
-
-
-
-//---
-
-
-int main() 
-{
-int test_val;
-uint gpio;
-
-gpio = MEASURE_PIN;
-
-stdio_init_all();
-printf("\nFrequency counter V0.0.3-foxy \n");
-
-
-lcd_main();
-
-printf(" line 222 \n");
-assert(pwm_gpio_to_channel(gpio) == PWM_CHAN_B); //the input chan
-slice_num = pwm_gpio_to_slice_num(gpio);
-
-cfg = pwm_get_default_config();
-pwm_config_set_clkdiv_mode(&cfg, PWM_DIV_B_RISING);
-pwm_config_set_clkdiv(&cfg, 10); //pre scale by 10 to prevent overflow in 16 bits
-pwm_init(slice_num, &cfg, false);
-gpio_set_function(gpio, GPIO_FUNC_PWM);
-
-float aaa,bbb,ccc;
-
-aaa = sin(ccc);
-
-for(int i = 0; i<100;i++)
-    {
-        test_val = measure_duty_cycle();
-    }
-printf("\n test val = %d DONE \n",test_val);
+#endif
 }
