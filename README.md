@@ -9,4 +9,5 @@ L = 1 / (4π*4π f C)   Ind
 
 C = 1 / (4π*4π f L)   Cap
 
+Changed name of Repo
 
