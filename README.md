@@ -1,4 +1,4 @@
-# RP2040-Reactance-Calculator
+# RP2040-Reactance-Meter
 Counter using one slice of the PWM module.
 To be used as a Capacitor and Inductor measurement tool.
 Uses Pi4 as a development machine, Mincom for debug and SWD for Loading debug.
