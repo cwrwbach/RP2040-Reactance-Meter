@@ -146,9 +146,9 @@ int lcd_main() {
 
     static char *message[] =
             {
-                    "RP2040 by", "RP2040 land",
-                    "A brand new", "microcontroller",
-                    "Twin core M0", "Full C SDK",
+                    "RP2040 by", "Wellington",
+                    "A brand new", "Thingy",
+                    "Twin core M0", "Wide wheels",
                     "flower power", "your product"
                    
             };
