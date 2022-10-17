@@ -12,7 +12,7 @@
     GND (pin 38)  -> GND on LCD bridge board
 */
 
-// commands
+// command set
 const int LCD_CLEARDISPLAY = 0x01;
 const int LCD_RETURNHOME = 0x02;
 const int LCD_ENTRYMODESET = 0x04;
@@ -118,11 +118,9 @@ void lcd_init() {
 
 //---
 
-int lcd_main() {
-//#if !defined(i2c_default) || !defined(PICO_DEFAULT_I2C_SDA_PIN) || !defined(PICO_DEFAULT_I2C_SCL_PIN)
- //   #warning i2c/lcd_1602_i2c example requires a board with I2C pins
-//#else
-
+int lcd_startup() 
+{
+char msg2[16];
     // This example will use I2C0 on the default SDA and SCL pins (4, 5 on a Pico)
     i2c_init(i2c_default, 100 * 1000);
     gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
@@ -134,40 +132,19 @@ int lcd_main() {
     bi_decl(bi_2pins_with_func(PICO_DEFAULT_I2C_SDA_PIN, PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C));
 
     lcd_init();
-/*
-    static char *message[] =
-            {
-                    "RP2040 by", "Wellington",
-                    "A brand new", "Thingy",
-                    "Twin core M0", "Wide wheels",
-                    "flower power", "your product"
-                   
-            };
 
-*/
 lcd_set_cursor(0,0);
 lcd_string("Line one ");
 lcd_set_cursor(1,0);
 lcd_string("...and Line two");
 lcd_set_cursor(1,10);
-lcd_string("?*?");
-//lcd_set_cursor(2,0);
-//lcd_string("now Line three ");
-//lcd_set_cursor(3,0);
-//lcd_string(" Last go");
+sleep_ms(1000);
+lcd_set_cursor(0,0);
 
-/*
-        for (int m = 0; m < sizeof(message) / sizeof(message[0]); m += MAX_LINES) {
-            for (int line = 0; line < MAX_LINES; line++) {
-                lcd_set_cursor(line, (MAX_CHARS / 2) - strlen(message[m + line]) / 2);
-                lcd_string(message[m + line]);
-            }
-*/  
-          sleep_ms(2000);
-            lcd_clear();
-//        }
-
-
-    return 0;
-//#endif
+//strcpy(msg2,"her again");
+//lcd_string(msg2);
+printf(" Done 2 ");
+sleep_ms(1000);
+printf(" Done 3 ");
+return 0;
 }
