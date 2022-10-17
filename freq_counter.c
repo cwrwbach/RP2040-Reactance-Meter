@@ -21,7 +21,7 @@ sleep_ms(1000);
 pwm_set_enabled(slice_num, false);
 
 unsigned int val = pwm_get_counter(slice_num);
-printf(" Count = %d \n",val);
+printf(" Count = %d \n",val*20);
 return val;
 }
 
@@ -29,7 +29,7 @@ return val;
 
 int main() 
 {
-int test_val;
+uint64_t test_val;
 uint gpio;
 
 gpio = MEASURE_PIN;
@@ -44,7 +44,7 @@ slice_num = pwm_gpio_to_slice_num(gpio);
 
 cfg = pwm_get_default_config();
 pwm_config_set_clkdiv_mode(&cfg, PWM_DIV_B_RISING);
-pwm_config_set_clkdiv(&cfg, 10); //pre scale by 10 to prevent overflow in 16 bits
+pwm_config_set_clkdiv(&cfg, 20); //pre scale by 10 to prevent overflow in 16 bits
 pwm_init(slice_num, &cfg, false);
 gpio_set_function(gpio, GPIO_FUNC_PWM);
 
