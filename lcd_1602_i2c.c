@@ -143,8 +143,8 @@ lcd_set_cursor(0,0);
 
 //strcpy(msg2,"her again");
 //lcd_string(msg2);
-printf(" Done 2 ");
-sleep_ms(1000);
-printf(" Done 3 ");
+//printf(" Done 2 ");
+//sleep_ms(1000);
+//printf(" Done 3 ");
 return 0;
 }
