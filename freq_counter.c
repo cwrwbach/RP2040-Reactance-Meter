@@ -80,14 +80,18 @@ f2 = f2 * 20;
 printf(" f1: %f f2: %f \n",f1,f2); 
 c1= ((f2*f2) / ((f1*f1) - (f2*f2))) * 1000e-12;
 printf(" C1: %6.3f pF \n",c1 * 1e12);
+
+l1= 1/(4 * (M_PI * M_PI) * (f1 * f1) * c1);
+printf(" L1: %6.3f uH \n",l1 * 1e6);
+
 }
 
-do_measure()
+cap_measure()
 {
 uint32_t freq;
 double cx;
 double f2;
-printf("\nStarting Measure \n");
+printf("\nStarting Capacitor Measure \n");
 relay_off();
 freq = measure_duty_cycle();
 sleep_ms(1000);
@@ -97,6 +101,23 @@ f2 = f2 * 20;
 printf(" f1: %f f2: %f \n",f1,f2); 
 cx= ( ((f1*f1)/(f2*f2)) -1) * c1;
 printf(" CX: %6.3f pF \n",cx * 1e12);
+}
+
+ind_measure()
+{
+uint32_t freq;
+double lx;
+double f2;
+printf("\nStarting Inductor Measure \n");
+relay_off();
+freq = measure_duty_cycle();
+sleep_ms(1000);
+f2=(double) freq;
+f2 = f2 * 20;
+
+printf(" f1: %f f2: %f \n",f1,f2); 
+lx= ( ((f1*f1)/(f2*f2)) -1) * l1;
+printf(" LX: %6.3f uH \n",lx * 1e6);
 }
 
 //---
@@ -151,17 +172,25 @@ while(1)
     if(gpio_get(TOP) ==0)
         {
         do_calib();
-        printf("Done calib\n");
+        printf("Done Calib\n");
         }
 
     if(gpio_get(BOT) ==0)
         {
-        do_measure();
-        printf(" Done measure \n");
+        cap_measure();
+        printf(" Done Cap measure \n");
         }
 
     if(gpio_get(LEFT) ==0)
-        printf("Left pressed \n ");
+        {
+        ind_measure();
+        printf(" Done Ind measure \n ");
+        }
+
+
+
+
+
     if(gpio_get(RIGHT) ==0)
         printf("Right pressed \n");
     }
