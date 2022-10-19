@@ -136,9 +136,9 @@ char msg2[16];
 lcd_set_cursor(0,0);
 lcd_string("Line one ");
 lcd_set_cursor(1,0);
-lcd_string("...and Line two");
-lcd_set_cursor(1,10);
-sleep_ms(1000);
+//lcd_string("...and Line two");
+//lcd_set_cursor(1,10);
+sleep_ms(200);
 lcd_set_cursor(0,0);
 
 //strcpy(msg2,"her again");

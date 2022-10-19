@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
+#include <stdlib.h>
 #include "pico/stdlib.h"
 #include "hardware/pwm.h"
 #include "hardware/clocks.h"
@@ -88,6 +89,7 @@ printf(" L1: %6.3f uH \n",l1 * 1e6);
 
 cap_measure()
 {
+char msg[16];
 uint32_t freq;
 double cx;
 double f2;
@@ -101,10 +103,18 @@ f2 = f2 * 20;
 printf(" f1: %f f2: %f \n",f1,f2); 
 cx= ( ((f1*f1)/(f2*f2)) -1) * c1;
 printf(" CX: %6.3f pF \n",cx * 1e12);
+
+sprintf(msg,"Cap: %3.1f",cx*1e12);
+
+lcd_set_cursor(0,0);
+lcd_string(msg);
+
+
 }
 
 ind_measure()
 {
+char msg[16];
 uint32_t freq;
 double lx;
 double f2;
@@ -118,6 +128,13 @@ f2 = f2 * 20;
 printf(" f1: %f f2: %f \n",f1,f2); 
 lx= ( ((f1*f1)/(f2*f2)) -1) * l1;
 printf(" LX: %6.3f uH \n",lx * 1e6);
+
+sprintf(msg,"Ind: %3.3f",lx*1e6);
+
+lcd_set_cursor(0,0);
+lcd_string(msg);
+
+
 }
 
 //---
