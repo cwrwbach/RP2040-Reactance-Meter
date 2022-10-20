@@ -120,7 +120,7 @@ void lcd_init() {
 
 int lcd_startup() 
 {
-char msg2[16];
+char msg2[16]= "";
     // This example will use I2C0 on the default SDA and SCL pins (4, 5 on a Pico)
     i2c_init(i2c_default, 100 * 1000);
     gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
@@ -134,12 +134,12 @@ char msg2[16];
     lcd_init();
 
 lcd_set_cursor(0,0);
-lcd_string("Line one ");
-lcd_set_cursor(1,0);
+lcd_string("L & C Measure");
+//lcd_set_cursor(1,0);
 //lcd_string("...and Line two");
 //lcd_set_cursor(1,10);
-sleep_ms(200);
-lcd_set_cursor(0,0);
+//sleep_ms(200);
+//lcd_set_cursor(0,0);
 
 //strcpy(msg2,"her again");
 //lcd_string(msg2);

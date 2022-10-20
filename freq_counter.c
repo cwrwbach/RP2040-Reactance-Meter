@@ -7,7 +7,7 @@
 #include "hardware/clocks.h"
 
 const uint MEASURE_1 = 15; //This is GPIO 15 = PIN 20 = Slice 7B
-const uint MEASURE_2 = 11; //This is GPIO 11 = PIN 15 = Slice 5B
+//const uint MEASURE_2 = 17; //This is GPIO 17 = PIN 22 = Slice 0B
 const uint LED_PIN = 13;
 const uint LEFT = 27;
 const uint RIGHT = 22;
@@ -19,6 +19,7 @@ uint slice_1,slice_2;
 pwm_config cfg_1,cfg_2;
 
 char i_val[16];
+char msg[16] = "";
 int lcd_startup();
 void lcd_set_cursor(int,int);
 void lcd_string(const char *s);
@@ -30,20 +31,22 @@ double f1,c1,l1;
 
 int measure_duty_cycle() 
 {
-unsigned int val_1,val_2;
+unsigned int val_1; //val_2;
 
+sleep_ms(10);
 pwm_init(slice_1, &cfg_1, false);
-pwm_init(slice_2, &cfg_2, false);
+//pwm_init(slice_2, &cfg_2, false);
 
 sleep_ms(10); 
 
+//pwm_set_enabled(slice_2, true);
 pwm_set_enabled(slice_1, true);
-pwm_set_enabled(slice_2, true);
 
-sleep_ms(1000);
+sleep_ms(100);
 
+//val_2 = pwm_get_counter(slice_2);
 val_1 = pwm_get_counter(slice_1);
-val_2 = pwm_get_counter(slice_2);
+
 
 sleep_ms(10); 
 
@@ -52,8 +55,9 @@ sleep_ms(10);
 
 
 
-printf(" VAL_1 %d, VAL_2 %d \n",val_1,val_2);
-
+//printf(" VAL_1 %d, VAL_2 %d Total: %d \n",val_1,val_2,val_1*16+val_2);
+val_1 *=20;
+printf(" val_1=%d\n",val_1);
 
 return val_1;
 }
@@ -77,21 +81,22 @@ sleep_ms(2);
 
 void do_calib()
 {
+//char msg[16]= "";
 uint32_t count_val;
 double f2;
 printf("\nStarting Calib \n");
 relay_off();
 count_val = measure_duty_cycle(); printf(" relay off FREQ: %d \n",count_val);
-sleep_ms(100);
+sleep_ms(1000);
 f1=(double) count_val;
-f1 = f1 * 20;
+//f1 = f1 * 10;
 
 relay_on();
 count_val = measure_duty_cycle(); printf(" relay on FREQ: %d \n",count_val);
 
-sleep_ms(1000);    
+sleep_ms(100);    
 f2=(double) count_val;
-f2 = f2 * 20;
+//f2 = f2 * 10;
 
 printf(" f1: %f f2: %f \n",f1,f2); 
 c1= ((f2*f2) / ((f1*f1) - (f2*f2))) * 1000e-12;
@@ -100,11 +105,22 @@ printf(" C1: %6.3f pF \n",c1 * 1e12);
 l1= 1/(4 * (M_PI * M_PI) * (f1 * f1) * c1);
 printf(" L1: %6.3f uH \n",l1 * 1e6);
 
+sprintf(msg,"Calib mode\n");
+
+lcd_set_cursor(0,0);
+lcd_string(msg);
+
+//sprintf(msg,"C1=%3.3f L1=%3.3f",c1*1e12,l1*1e12);
+
+//lcd_set_cursor(1,0);
+//lcd_string(msg);
+
+
 }
 
-cap_measure()
+void cap_measure()
 {
-char msg[16];
+char msg[16]= "";
 uint32_t freq;
 double cx;
 double f2;
@@ -113,11 +129,12 @@ relay_off();
 freq = measure_duty_cycle();
 sleep_ms(1000);
 f2=(double) freq;
-f2 = f2 * 20;
+//f2 = f2 * 10;
 
 printf(" f1: %f f2: %f \n",f1,f2); 
 cx= ( ((f1*f1)/(f2*f2)) -1) * c1;
 printf(" CX: %6.3f pF \n",cx * 1e12);
+
 
 sprintf(msg,"Cap: %3.1f",cx*1e12);
 
@@ -127,9 +144,9 @@ lcd_string(msg);
 
 }
 
-ind_measure()
+void ind_measure()
 {
-char msg[16];
+char msg[16]="";
 uint32_t freq;
 double lx;
 double f2;
@@ -138,7 +155,7 @@ relay_off();
 freq = measure_duty_cycle();
 sleep_ms(1000);
 f2=(double) freq;
-f2 = f2 * 20;
+//f2 = f2 * 10;
 
 printf(" f1: %f f2: %f \n",f1,f2); 
 lx= ( ((f1*f1)/(f2*f2)) -1) * l1;
@@ -178,7 +195,7 @@ gpio_set_dir(RIGHT, GPIO_IN);
 gpio_pull_up(RIGHT) ; 
 
 gpio_count_1 = MEASURE_1;
-gpio_count_2 = MEASURE_2;
+//gpio_count_2 = MEASURE_2;
 
 stdio_init_all();
 printf("\nFrequency counter V0.0.6-juliet \n");
@@ -191,27 +208,26 @@ sleep_ms(200);
 lcd_string(msg);
 
 //setup counter 1
-assert(pwm_gpio_to_channel(gpio) == PWM_CHAN_B); //the input chan
+assert(pwm_gpio_to_channel(gpio_1) == PWM_CHAN_B); //the input chan
 slice_1 = pwm_gpio_to_slice_num(gpio_count_1);
 
 cfg_1 = pwm_get_default_config();
 pwm_config_set_clkdiv_mode(&cfg_1, PWM_DIV_B_RISING);
-pwm_config_set_clkdiv(&cfg_1, 16); //pre scale to prevent overflow in 16 bits
+pwm_config_set_clkdiv(&cfg_1, 2); //pre scale to prevent overflow in 16 bits
 pwm_init(slice_1, &cfg_1, false);
 gpio_set_function(gpio_count_1, GPIO_FUNC_PWM);
 
-
+/*
 //setup counter 2
-assert(pwm_gpio_to_channel(gpio) == PWM_CHAN_B); //the input chan
+//assert(pwm_gpio_to_channel(gpio) == PWM_CHAN_B); //the input chan
 slice_2 = pwm_gpio_to_slice_num(gpio_count_2);
 
 cfg_2= pwm_get_default_config();
 pwm_config_set_clkdiv_mode(&cfg_2, PWM_DIV_B_RISING);
-pwm_config_set_clkdiv(&cfg_2, 1); //pre scale to prevent overflow in 16 bits
+pwm_config_set_clkdiv(&cfg_2, 2); //pre scale to prevent overflow in 16 bits
 pwm_init(slice_2, &cfg_2, false);
 gpio_set_function(gpio_count_2, GPIO_FUNC_PWM);
-
-
+*/
 
 while(1)
     {
