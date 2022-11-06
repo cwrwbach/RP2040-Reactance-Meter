@@ -17,7 +17,6 @@ const uint BOT = 26;
 uint slice_1,slice_2;
 
 pwm_config cfg_1,cfg_2;
-
 char i_val[16];
 int lcd_startup();
 void lcd_set_cursor(int,int);
@@ -46,15 +45,8 @@ sleep_ms(100);
 //val_2 = pwm_get_counter(slice_2);
 val_1 = pwm_get_counter(slice_1);
 
-
 sleep_ms(10); 
 
-//sleep_ms(1000);
-//pwm_set_enabled(slice_2, false);
-
-
-
-//printf(" VAL_1 %d, VAL_2 %d Total: %d \n",val_1,val_2,val_1*16+val_2);
 val_1 *=20;
 printf(" val_1=%d\n",val_1);
 
@@ -88,14 +80,12 @@ relay_off();
 count_val = measure_duty_cycle(); printf(" relay off FREQ: %d \n",count_val);
 sleep_ms(1000);
 f1=(double) count_val;
-//f1 = f1 * 10;
 
 relay_on();
 count_val = measure_duty_cycle(); printf(" relay on FREQ: %d \n",count_val);
 
 sleep_ms(100);    
 f2=(double) count_val;
-//f2 = f2 * 10;
 
 printf(" f1: %f f2: %f \n",f1,f2); 
 c1= ((f2*f2) / ((f1*f1) - (f2*f2))) * 1000e-12;
@@ -108,7 +98,7 @@ sprintf(msg,"                ");
 lcd_set_cursor(0,0);
 lcd_string(msg);
 
-sprintf(msg,"Calib mode.");
+sprintf(msg,"Calib mode, ref:");
 lcd_set_cursor(0,0);
 lcd_string(msg);
 
@@ -116,8 +106,6 @@ sprintf(msg,"C:%3.1f L:%3.3f",c1*1e12,l1*1e12);
 
 lcd_set_cursor(1,0);
 lcd_string(msg);
-
-
 }
 
 void cap_measure()
@@ -131,7 +119,6 @@ relay_off();
 freq = measure_duty_cycle();
 sleep_ms(1000);
 f2=(double) freq;
-//f2 = f2 * 10;
 
 printf(" f1: %f f2: %f \n",f1,f2); 
 cx= ( ((f1*f1)/(f2*f2)) -1) * c1;
@@ -145,7 +132,6 @@ sprintf(msg,"Cap: %3.1f",cx*1e12);
 lcd_set_cursor(0,0);
 lcd_string(msg);
 
-
 sprintf(msg,"                ");
 lcd_set_cursor(1,0);
 lcd_string(msg);
@@ -153,9 +139,6 @@ lcd_string(msg);
 sprintf(msg,"Freq: %d",freq);
 lcd_set_cursor(1,0);
 lcd_string(msg);
-
-
-
 }
 
 void ind_measure()
@@ -169,7 +152,6 @@ relay_off();
 freq = measure_duty_cycle();
 sleep_ms(1000);
 f2=(double) freq;
-//f2 = f2 * 10;
 
 printf(" f1: %f f2: %f \n",f1,f2); 
 lx= ( ((f1*f1)/(f2*f2)) -1) * l1;
@@ -189,7 +171,6 @@ lcd_string(msg);
 sprintf(msg,"Freq: %d",freq);
 lcd_set_cursor(1,0);
 lcd_string(msg);
-
 }
 
 //---
@@ -218,16 +199,13 @@ gpio_set_dir(RIGHT, GPIO_IN);
 gpio_pull_up(RIGHT) ; 
 
 gpio_count_1 = MEASURE_1;
-//gpio_count_2 = MEASURE_2;
 
 stdio_init_all();
 printf("\nFrequency counter V0.0.6-juliet \n");
 
 lcd_startup();
-
 sleep_ms(200);
 //  lcd_clear();
-
 lcd_string(msg);
 
 //setup counter 1
@@ -239,18 +217,6 @@ pwm_config_set_clkdiv_mode(&cfg_1, PWM_DIV_B_RISING);
 pwm_config_set_clkdiv(&cfg_1, 2); //pre scale to prevent overflow in 16 bits
 pwm_init(slice_1, &cfg_1, false);
 gpio_set_function(gpio_count_1, GPIO_FUNC_PWM);
-
-/*
-//setup counter 2
-//assert(pwm_gpio_to_channel(gpio) == PWM_CHAN_B); //the input chan
-slice_2 = pwm_gpio_to_slice_num(gpio_count_2);
-
-cfg_2= pwm_get_default_config();
-pwm_config_set_clkdiv_mode(&cfg_2, PWM_DIV_B_RISING);
-pwm_config_set_clkdiv(&cfg_2, 2); //pre scale to prevent overflow in 16 bits
-pwm_init(slice_2, &cfg_2, false);
-gpio_set_function(gpio_count_2, GPIO_FUNC_PWM);
-*/
 
 while(1)
     {
@@ -271,10 +237,6 @@ while(1)
         ind_measure();
         printf(" Done Ind measure \n ");
         }
-
-
-
-
 
     if(gpio_get(RIGHT) ==0)
         printf("Right pressed \n");

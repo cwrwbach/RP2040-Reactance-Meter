@@ -134,7 +134,7 @@ char msg2[16]= "";
     lcd_init();
 
 lcd_set_cursor(0,0);
-lcd_string("L&C Tester V.1.0");
+lcd_string("L&C Tester V.1.1");
 //lcd_set_cursor(1,0);
 //lcd_string("...and Line two");
 //lcd_set_cursor(1,10);
