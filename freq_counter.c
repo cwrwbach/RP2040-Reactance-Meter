@@ -19,7 +19,6 @@ uint slice_1,slice_2;
 pwm_config cfg_1,cfg_2;
 
 char i_val[16];
-char msg[16] = "";
 int lcd_startup();
 void lcd_set_cursor(int,int);
 void lcd_string(const char *s);
@@ -81,7 +80,7 @@ sleep_ms(2);
 
 void do_calib()
 {
-//char msg[16]= "";
+char msg[32]= "";
 uint32_t count_val;
 double f2;
 printf("\nStarting Calib \n");
@@ -105,22 +104,25 @@ printf(" C1: %6.3f pF \n",c1 * 1e12);
 l1= 1/(4 * (M_PI * M_PI) * (f1 * f1) * c1);
 printf(" L1: %6.3f uH \n",l1 * 1e6);
 
-sprintf(msg,"Calib mode\n");
-
+sprintf(msg,"                ");
 lcd_set_cursor(0,0);
 lcd_string(msg);
 
-//sprintf(msg,"C1=%3.3f L1=%3.3f",c1*1e12,l1*1e12);
+sprintf(msg,"Calib mode.");
+lcd_set_cursor(0,0);
+lcd_string(msg);
 
-//lcd_set_cursor(1,0);
-//lcd_string(msg);
+sprintf(msg,"C:%3.1f L:%3.3f",c1*1e12,l1*1e12);
+
+lcd_set_cursor(1,0);
+lcd_string(msg);
 
 
 }
 
 void cap_measure()
 {
-char msg[16]= "";
+char msg[32]= "";
 uint32_t freq;
 double cx;
 double f2;
@@ -135,18 +137,30 @@ printf(" f1: %f f2: %f \n",f1,f2);
 cx= ( ((f1*f1)/(f2*f2)) -1) * c1;
 printf(" CX: %6.3f pF \n",cx * 1e12);
 
-
-sprintf(msg,"Cap: %3.1f",cx*1e12);
-
+sprintf(msg,"                ");
 lcd_set_cursor(0,0);
 lcd_string(msg);
+
+sprintf(msg,"Cap: %3.1f",cx*1e12);
+lcd_set_cursor(0,0);
+lcd_string(msg);
+
+
+sprintf(msg,"                ");
+lcd_set_cursor(1,0);
+lcd_string(msg);
+
+sprintf(msg,"Freq: %d",freq);
+lcd_set_cursor(1,0);
+lcd_string(msg);
+
 
 
 }
 
 void ind_measure()
 {
-char msg[16]="";
+char msg[32]="";
 uint32_t freq;
 double lx;
 double f2;
@@ -160,12 +174,21 @@ f2=(double) freq;
 printf(" f1: %f f2: %f \n",f1,f2); 
 lx= ( ((f1*f1)/(f2*f2)) -1) * l1;
 printf(" LX: %6.3f uH \n",lx * 1e6);
-
-sprintf(msg,"Ind: %3.3f",lx*1e6);
-
+sprintf(msg,"                ");
 lcd_set_cursor(0,0);
 lcd_string(msg);
 
+sprintf(msg,"Ind: %3.3f",lx*1e6);
+lcd_set_cursor(0,0);
+lcd_string(msg);
+
+sprintf(msg,"                ");
+lcd_set_cursor(1,0);
+lcd_string(msg);
+
+sprintf(msg,"Freq: %d",freq);
+lcd_set_cursor(1,0);
+lcd_string(msg);
 
 }
 
